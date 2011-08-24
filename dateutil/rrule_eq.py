@@ -119,15 +119,56 @@ class rrule_eqTests(unittest.TestCase):
         self.assertTrue(r1==r2)        
 
     def test_not_equals(self):
-        r1 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15))
-        r2 = rrule_eq(MONTHLY, dtstart=datetime(2012, 8, 15))
+        r1 = rrule_eq(SECONDLY, dtstart=datetime(2012, 8, 15))
+        r2 = rrule_eq(MINUTELY, dtstart=datetime(2012, 8, 15))
         self.assertFalse(r1==r2)
 
-        r2 = rrule_eq(DAILY, dtstart=datetime(2011, 8, 15))
+        r1 = rrule_eq(MINUTELY, dtstart=datetime(2012, 8, 15), bysecond=3)
+        r2 = rrule_eq(MINUTELY, dtstart=datetime(2012, 8, 15), bysecond=4)
         self.assertFalse(r1==r2)
 
-        r1 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byweekday=MO)
-        r2 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byweekday=TU)
+        r1 = rrule_eq(HOURLY, dtstart=datetime(2012, 8, 15), byminute=27)
+        r2 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byminute=27)
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byhour=22)
+        r2 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 16), byhour=22)
+        self.assertFalse(r1==r2)
+        
+        r1 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byyearday=78, byweekday=TU)
+        r2 = rrule_eq(DAILY, dtstart=datetime(2012, 8, 15), byyearday=78)
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(MONTHLY, dtstart=datetime(2012, 8, 15), bymonthday=-1)
+        r2 = rrule_eq(MONTHLY, dtstart=datetime(2012, 8, 15), bymonthday=-2)
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(MONTHLY, dtstart=datetime(2012, 8, 15), byweekday=MO(+2))
+        r2 = rrule_eq(MONTHLY, dtstart=datetime(2012, 8, 15), byweekday=WE(+2))
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byweekday=(MO, WE, TH), bysetpos=-1)
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byweekday=(MO, WE, TH), bysetpos=1)
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), wkst=SU, byweekday=(MO, WE, TH), bysetpos=-1)
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), wkst=FR, byweekday=(MO, WE, TH), bysetpos=-1)
+        self.assertFalse(r1==r2)
+        
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12))
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), interval=3)
+        self.assertFalse(r1==r2)
+
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), count=13)
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), count=12)
+        self.assertFalse(r1==r2)
+                
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), interval=5)
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), interval=6)
+        self.assertFalse(r1==r2)        
+
+        r1 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), until=datetime(2013, 8, 15))
+        r2 = rrule_eq(YEARLY, dtstart=datetime(2012, 8, 15), byeaster=(2, 10, 12), until=datetime(2013, 9, 15))
         self.assertFalse(r1==r2)
         
 if __name__ == '__main__':
